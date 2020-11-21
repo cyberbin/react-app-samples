@@ -1,0 +1,14 @@
+.searcbar{
+    width: 40%;
+}
+
+.activeSwitch{
+    margin-left: 70%;
+}
+
+.flexContainer{
+    display: flex;
+    justify-content: space-between;
+    margin :20px;
+    align-items: stretch;
+}
