@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
-import { TableHead, TableRow, TableCell, TableSortLabel ,TextField, InputAdornment, Button, Checkbox, Paper, FormControlLabel, Typography, Grid, FormLabel, FormGroup, FormControl } from '@material-ui/core'
+import { TableHead, TableRow, TableCell, TableSortLabel, TextField, RadioGroup, Radio } from '@material-ui/core'
+import { InputAdornment, Button, Checkbox, Paper, FormControlLabel, Typography, Grid, FormLabel, FormGroup, FormControl } from '@material-ui/core'
 import { Label, Search } from "@material-ui/icons"
 import 'date-fns';
 import DateFnsUtils from '@date-io/date-fns';
@@ -8,6 +9,11 @@ import {
     KeyboardDatePicker,
 } from '@material-ui/pickers';
 
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 
 const headers = [
     { id: '1', name: 'Sample ID' },
@@ -20,7 +26,7 @@ const headers = [
 ]
 
 function TableHeader(props) {
-    const {order, orderBy ,setOrder, setOrderBy} = props;
+    const { order, orderBy, setOrder, setOrderBy } = props;
     const handleSortRequest = cellId => {
         const isAsc = orderBy === cellId && order === "asc";
         setOrder(isAsc ? 'desc' : 'asc');
@@ -46,7 +52,8 @@ function TableHeader(props) {
 
 function FilterBar(props) {
 
-    const { taskFilterFn, setTaskFilterFn, isCompleted, setIsCompleted, isPending, setIsPending, toDate, setToDate, fromDate, setFromDate, dateFilterFn, setDateFilterFn } = props;
+    const { taskFilterFn, setTaskFilterFn, isCompleted, setIsCompleted, isPending, setIsPending, toDate,
+        setToDate, fromDate, setFromDate, dateFilterFn, setDateFilterFn, dialogOpen, setDialogOpen ,sampleType, setSampleType} = props;
 
 
     const handleIsCompletedChange = (e) => {
@@ -65,6 +72,16 @@ function FilterBar(props) {
     const handleFromDateChange = (date) => {
         setFromDate(date);
         handleDateFilter();
+    }
+    const handleSampleSelectorChange=(event)=>{
+        setSampleType(event.target.value);
+    }
+    const handleClose = () => {
+        setDialogOpen(false)
+    }
+
+    const handleClickOpen = () => {
+        setDialogOpen(true)
     }
 
     const handleSearchName = (event) => {
@@ -137,9 +154,39 @@ function FilterBar(props) {
                     <Grid item sm={1}>  <Typography variant="h6"> Project Number: </Typography> </Grid>
                     <Grid item sm={1}> <Typography variant="h6"> 1234567 </Typography>   </Grid>
                     <Grid item sm={1}> </Grid>
-                    <Grid item sm={2}>   <Button variant="contained" color="secondary"> Create Sample </Button>  </Grid>
+                    <Grid item sm={2}>   <Button variant="contained" color="secondary" onClick={handleClickOpen}> Create Sample </Button>  </Grid>
                     <Grid item sm={true}></Grid>
                 </Grid>
+
+                <Dialog open={dialogOpen} onClose={handleClose} aria-labelledby="form-dialog-title">
+                    <DialogTitle id="form-dialog-title">Sample</DialogTitle>
+                    <DialogContent>
+                        <FormControl component="fieldset">
+                            <FormLabel component="legend">Sample Type</FormLabel>
+                            <RadioGroup aria-label="sampleType" name="sampleType" value={sampleType} onChange={handleSampleSelectorChange}>
+                                <FormControlLabel value="everyNtask" control={<Radio />} label="Every N Tasks" />
+                                <FormControlLabel value="fullBatch" control={<Radio />} label="100% in the Batch" />
+                            </RadioGroup>
+                        </FormControl>
+                        <TextField
+                            autoFocus
+                            id="tasks"
+                            label="Tasks"
+                            type="number"
+                            fullWidth
+                            variant = "outlined"
+                            disabled = {sampleType == "everyNtask"? false : true}
+                        />
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleClose} color="primary">
+                            Cancel
+            </Button>
+                        <Button onClick={handleClose} color="primary">
+                            Create Sample
+            </Button>
+                    </DialogActions>
+                </Dialog>
             </Paper>
         </>
     )

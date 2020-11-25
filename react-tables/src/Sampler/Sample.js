@@ -1,7 +1,6 @@
-import { Button, TextField, InputAdornment, IconButton, Table, TablePagination, TableBody, TableCell, TableFooter, TableHead, TableRow } from '@material-ui/core'
+import { Button, IconButton, Table, TablePagination, TableBody, TableCell, TableFooter, TableRow } from '@material-ui/core'
 import React, { useState } from 'react'
 import DeleteIcon from '@material-ui/icons/Delete';
-import { Search } from "@material-ui/icons"
 import { TableHeader, FilterBar } from './SampleHelper'
 
 const rowsInitial = [
@@ -28,6 +27,8 @@ function Sample() {
     const [isPending, setIsPending] = useState(false);
     const [isCompleted, setIsCompleted] = useState(true);
     const [toDate, setToDate] = useState(new Date());
+    const [dialogOpen, setDialogOpen] = useState(false);
+    const [sampleType, setSampleType] = useState("everyNtask");
     const [fromDate, setFromDate] = useState(new Date("01-01-2020"));
     const [taskFilterFn, setTaskFilterFn] = useState({
         fn: (items) => {
@@ -78,9 +79,6 @@ function Sample() {
 
     const statusFilterData = (items) => {
         return items.filter((item) => {
-            console.log("🚀 ~ file: Sample.js ~ line 96 ~ returnitems.filter ~ tems.status", item.status)
-            console.log("🚀 ~ file: Sample.js ~ line 96 ~ returnitems.filter ~ isCompleted", isCompleted)
-            console.log("🚀 ~ file: Sample.js ~ line 96 ~ returnitems.filter ~ isPending", isPending)
             if (item.status == "pending" && isPending) {
                 return true;
             }
@@ -99,18 +97,6 @@ function Sample() {
         return stableSort(taskFilteredData, getComparator(order, orderBy)).slice(page * rowsPerPage, (page + 1) * rowsPerPage)
     }
 
-    const isCompletedFilter = () => {
-        let statusData = rows
-
-        if (isCompleted) {
-            statusData = rows.filter((item) => {
-                return item.status.toLocaleLowerCase() == "completed"
-            })
-        }
-
-        return statusData;
-    }
-
     return (
         <div>
             <FilterBar
@@ -120,6 +106,8 @@ function Sample() {
                 toDate={toDate} setToDate={setToDate}
                 fromDate={fromDate} setFromDate={setFromDate}
                 dateFilterFn={dateFilterFn} setDateFilterFn={setDateFilterFn}
+                dialogOpen={dialogOpen} setDialogOpen={setDialogOpen}
+                sampleType={sampleType} setSampleType={ setSampleType}
             />
             <Table>
                 <TableHeader order={order} orderBy={orderBy} setOrder={setOrder} setOrderBy={setOrderBy} />
